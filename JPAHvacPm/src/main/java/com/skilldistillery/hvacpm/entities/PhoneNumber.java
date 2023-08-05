@@ -2,10 +2,14 @@ package com.skilldistillery.hvacpm.entities;
 
 import java.util.Objects;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "phone_number")
 public class PhoneNumber {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

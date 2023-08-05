@@ -30,7 +30,7 @@ public class HvacPmController {
 		return pmService.listAllPms();
 	}
 	
-	@GetMapping("pms/{id}")
+	@GetMapping("hvacpms/{id}")
 	HvacPm getPmById(@PathVariable("id") Integer pmId, HttpServletResponse res) {
 		HvacPm pm = pmService.getById(pmId);
 		if (pm == null) {
@@ -39,7 +39,7 @@ public class HvacPmController {
 		return pm;
 	}
 	
-	@PostMapping("pms")
+	@PostMapping("hvacpms")
 	public HvacPm createHvacPm(@RequestBody HvacPm pm, HttpServletResponse res, HttpServletRequest req) {
 		System.out.println(pm);
 		try {
@@ -55,7 +55,7 @@ public class HvacPmController {
 		}
 		return pm;
 	}
-	@PutMapping("pms/{pmId}")
+	@PutMapping("hvacpms/{pmId}")
 	public HvacPm updateHvacPm(@PathVariable int pmId, @RequestBody HvacPm pm, HttpServletResponse res) {
 		try {
 			pm = pmService.update(pmId, pm);
@@ -69,7 +69,7 @@ public class HvacPmController {
 		return pm;
 	}
 	
-	@DeleteMapping("pms/{pmId}")
+	@DeleteMapping("hvacpms/{pmId}")
 	public void deleteHvacPm(@PathVariable("pmId") Integer pmId, HttpServletResponse res) {
 		try {
 			if (pmService.delete(pmId)) {

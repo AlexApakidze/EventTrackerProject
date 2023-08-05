@@ -7,7 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "hvac_pm")
@@ -18,17 +26,33 @@ public class HvacPm {
 	private int id;
 
 	private int quarter;
-
+	
+	@OneToOne
+	@JoinColumn(name="address_id")
 	private Address address;
-
+	
+	@OneToOne
+	@JoinColumn(name="customer_id")
 	private Customer customer;
 
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "hvac_pm_task", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "hvac_pm_id"))
 	private List<Task> tasks;
 
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "hvac_pm_technician", joinColumns = @JoinColumn(name = "technician_id"), inverseJoinColumns = @JoinColumn(name = "hvac_pm_id"))
 	private List<Technician> techs;
 
+	
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "hvac_pm_contact", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "hvac_pm_id"))
 	private List<Contact> contacts;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "pm")
 	public List<Equipment> units;
 
 	public HvacPm() {

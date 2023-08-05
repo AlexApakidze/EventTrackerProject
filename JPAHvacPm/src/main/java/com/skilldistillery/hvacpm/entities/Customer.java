@@ -3,10 +3,17 @@ package com.skilldistillery.hvacpm.entities;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
 public class Customer {
 
 	@Id
@@ -17,10 +24,16 @@ public class Customer {
 	
 	private String company;
 	
+	@OneToOne
+	@JoinColumn(name="address_id")
 	private Address address;
 	
+	@OneToOne
+	@JoinColumn(name="phone_number_id")
 	private PhoneNumber phoneNumber;
 	
+	@JsonIgnore
+	@OneToMany(mappedBy = "customer")
 	private List<HvacPm> pms;
 
 	
