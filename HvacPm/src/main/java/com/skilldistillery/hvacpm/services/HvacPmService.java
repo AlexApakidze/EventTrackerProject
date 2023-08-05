@@ -8,7 +8,7 @@ public interface HvacPmService {
 
 	List<HvacPm> listAllPms();
 
-	HvacPm getPm(int pmId);
+	HvacPm getById(int pmId);
 
 	HvacPm create(HvacPm pm);
 

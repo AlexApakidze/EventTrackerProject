@@ -6,4 +6,7 @@ import com.skilldistillery.hvacpm.entities.HvacPm;
 
 public interface HvacPmRepository extends JpaRepository<HvacPm, Integer> {
 
+	
+	
+	
 }

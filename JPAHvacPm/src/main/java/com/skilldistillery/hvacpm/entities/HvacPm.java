@@ -1,5 +1,6 @@
 package com.skilldistillery.hvacpm.entities;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -8,9 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 @Entity
-@Table(name="hvac_pm")
+@Table(name = "hvac_pm")
 public class HvacPm {
 
 	@Id
@@ -18,6 +18,18 @@ public class HvacPm {
 	private int id;
 
 	private int quarter;
+
+	private Address address;
+
+	private Customer customer;
+
+	private List<Task> tasks;
+
+	private List<Technician> techs;
+
+	private List<Contact> contacts;
+
+	public List<Equipment> units;
 
 	public HvacPm() {
 		super();
@@ -39,6 +51,54 @@ public class HvacPm {
 		this.quarter = quarter;
 	}
 
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public List<Task> getTasks() {
+		return tasks;
+	}
+
+	public List<Equipment> getUnits() {
+		return units;
+	}
+
+	public void setUnits(List<Equipment> units) {
+		this.units = units;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
+
+	public List<Technician> getTechs() {
+		return techs;
+	}
+
+	public void setTechs(List<Technician> techs) {
+		this.techs = techs;
+	}
+
+	public List<Contact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -58,7 +118,8 @@ public class HvacPm {
 
 	@Override
 	public String toString() {
-		return "Quarter [id=" + id + ", quarter=" + quarter + "]";
+		return "HvacPm [id=" + id + ", quarter=" + quarter + ", address=" + address + ", customer=" + customer
+				+ ", tasks=" + tasks.size() + ", techs=" + techs.size() + ", contacts=" + contacts.size() + "]";
 	}
 
 }

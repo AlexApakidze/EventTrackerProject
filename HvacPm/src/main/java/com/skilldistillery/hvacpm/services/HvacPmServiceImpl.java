@@ -1,6 +1,7 @@
 package com.skilldistillery.hvacpm.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,28 +21,51 @@ public class HvacPmServiceImpl implements HvacPmService {
 		return pmRepo.findAll();
 	}
 
+	
 	@Override
-	public HvacPm getPm(int pmId) {
-		// TODO Auto-generated method stub
+	public HvacPm getById(int pmId) {
+		HvacPm pm = null;
+		Optional<HvacPm> pmOpt = pmRepo.findById(pmId);
+		if (pmOpt.isPresent()) {
+			return pmOpt.get();
+		}
 		return null;
 	}
 
 	@Override
-	public HvacPm create(HvacPm pm) {
-		// TODO Auto-generated method stub
-		return null;
+	public HvacPm create(HvacPm newHvacPm) {
+
+		return pmRepo.saveAndFlush(newHvacPm);
 	}
 
 	@Override
-	public HvacPm update(int pmId, HvacPm pm) {
-		// TODO Auto-generated method stub
-		return null;
+	public HvacPm update(int pmId, HvacPm newHvacPm) {
+		HvacPm existingHvacPm = null;
+		Optional<HvacPm> existingOpt = pmRepo.findById(pmId);
+		if(existingOpt.isPresent()) {
+			existingHvacPm = existingOpt.get();
+			existingHvacPm.setAddress(newHvacPm.getAddress());
+			existingHvacPm.setContacts(newHvacPm.getContacts());
+			existingHvacPm.setCustomer(newHvacPm.getCustomer());;
+			existingHvacPm.setQuarter(newHvacPm.getQuarter());
+			existingHvacPm.setTasks(newHvacPm.getTasks());
+			existingHvacPm.setTechs(newHvacPm.getTechs());
+			existingHvacPm.setUnits(newHvacPm.getUnits());
+			pmRepo.saveAndFlush(existingHvacPm);
+		}
+		return existingHvacPm;
 	}
 
 	@Override
 	public boolean delete(int pmId) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean deleted = false;
+		Optional<HvacPm> toDeleteOpt = pmRepo.findById(pmId);
+		if(toDeleteOpt.isPresent()) {
+			pmRepo.delete(toDeleteOpt.get());
+			deleted = true;
+		}
+		
+		return deleted;
 	}
 
 }
