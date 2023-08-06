@@ -1,5 +1,6 @@
 package com.skilldistillery.hvacpm.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,6 +68,22 @@ public class Contact {
 		this.pms = pms;
 	}
 
+	
+	public void addPm(HvacPm pm) {
+		if(pms ==null) {pms = new ArrayList<>();}
+		if( ! pms.contains(pm)) {
+			pms.add(pm);
+			pm.addContact(this);
+		}
+	}
+
+	public void removePm(HvacPm pm) {
+		if(pms!= null && pms.contains(pm)) {
+			pms.remove(pm);
+			pm.removeContact(this);
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

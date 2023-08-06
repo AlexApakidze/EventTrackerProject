@@ -1,5 +1,6 @@
 package com.skilldistillery.hvacpm.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,6 +67,22 @@ public class Technician {
 	public void setAccounts(List<HvacPm> accounts) {
 		this.accounts = accounts;
 	}
+	
+	public void addAccount(HvacPm account) {
+		if(accounts ==null) {accounts = new ArrayList<>();}
+		if( ! accounts.contains(account)) {
+			accounts.add(account);
+			account.addTechnician(this);
+		}
+	}
+
+	public void removeAccount(HvacPm account) {
+		if(accounts!= null && accounts.contains(account)) {
+			accounts.remove(account);
+			account.removeTechnician(this);
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

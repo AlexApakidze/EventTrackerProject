@@ -1,5 +1,6 @@
 package com.skilldistillery.hvacpm.entities;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -7,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,7 +31,6 @@ public class Equipment {
 	@JoinColumn(name="hvac_pm_id")
 	private HvacPm pm;
 
-	
 	
 	public Equipment() {
 		super();
