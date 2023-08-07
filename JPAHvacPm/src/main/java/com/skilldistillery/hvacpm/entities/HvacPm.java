@@ -45,7 +45,6 @@ public class HvacPm {
 	@JoinTable(name = "hvac_pm_technician", joinColumns = @JoinColumn(name = "technician_id"), inverseJoinColumns = @JoinColumn(name = "hvac_pm_id"))
 	private List<Technician> techs;
 
-	
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "hvac_pm_contact", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "hvac_pm_id"))
@@ -180,6 +179,7 @@ public class HvacPm {
 			units.remove(unit);
 		}
 	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
