@@ -52,7 +52,7 @@ public class HvacPm {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "pm")
-	public List<Equipment> units;
+	private List<Equipment> units;
 
 	public HvacPm() {
 		super();

@@ -6,11 +6,11 @@
 
 | HTTP Verb | URI                      | Request Body | Response Body |
 |-----------|--------------------------|--------------|---------------|
-| GET       | `/api/hvacpms`          |              | List of HVAC PMs |
-| GET       | `/api/hvacpms/{pmId}` |              | Single PM | 
+| GET       | `/api/hvacpms`          |               | List of HVAC PMs |
+| GET       | `/api/hvacpms/{pmId}`   |               | Single PM | 
 | POST      | `/api/hvacpms`          | Representation of a new PM| Created PM |
-| PUT       | `/api/hvacpms/{pmId}` | Representation of a new version of a PM | Updated PM|
-| DELETE    | `/api/hvacpms/{pmId}` |              |                | 
+| PUT       | `/api/hvacpms/{pmId}`   | Representation of a new version of a PM | Updated PM|
+| DELETE    | `/api/hvacpms/{pmId}`   |               |                | 
 
 #### Technologies Used
 
