@@ -12,19 +12,16 @@ import com.skilldistillery.hvacpm.repositories.HvacPmRepository;
 @Service
 public class HvacPmServiceImpl implements HvacPmService {
 
-	
 	@Autowired
 	private HvacPmRepository pmRepo;
-	
+
 	@Override
 	public List<HvacPm> listAllPms() {
 		return pmRepo.findAll();
 	}
 
-	
 	@Override
 	public HvacPm getById(int pmId) {
-		HvacPm pm = null;
 		Optional<HvacPm> pmOpt = pmRepo.findById(pmId);
 		if (pmOpt.isPresent()) {
 			return pmOpt.get();
@@ -42,11 +39,11 @@ public class HvacPmServiceImpl implements HvacPmService {
 	public HvacPm update(int pmId, HvacPm newHvacPm) {
 		HvacPm existingHvacPm = null;
 		Optional<HvacPm> existingOpt = pmRepo.findById(pmId);
-		if(existingOpt.isPresent()) {
+		if (existingOpt.isPresent()) {
 			existingHvacPm = existingOpt.get();
 			existingHvacPm.setAddress(newHvacPm.getAddress());
 			existingHvacPm.setContacts(newHvacPm.getContacts());
-			existingHvacPm.setCustomer(newHvacPm.getCustomer());;
+			existingHvacPm.setCustomer(newHvacPm.getCustomer());
 			existingHvacPm.setQuarter(newHvacPm.getQuarter());
 			existingHvacPm.setTasks(newHvacPm.getTasks());
 			existingHvacPm.setTechs(newHvacPm.getTechs());
@@ -60,11 +57,11 @@ public class HvacPmServiceImpl implements HvacPmService {
 	public boolean delete(int pmId) {
 		boolean deleted = false;
 		Optional<HvacPm> toDeleteOpt = pmRepo.findById(pmId);
-		if(toDeleteOpt.isPresent()) {
+		if (toDeleteOpt.isPresent()) {
 			pmRepo.delete(toDeleteOpt.get());
 			deleted = true;
 		}
-		
+
 		return deleted;
 	}
 

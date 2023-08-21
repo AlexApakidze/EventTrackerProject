@@ -21,7 +21,7 @@ public class Task {
 	private int id;
 
 	private String todo;
-	
+
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "hvac_pm_task", joinColumns = @JoinColumn(name = "hvac_pm_id"), inverseJoinColumns = @JoinColumn(name = "pm_id"))
@@ -47,20 +47,22 @@ public class Task {
 	}
 
 	public void addPm(HvacPm pm) {
-		if(pms ==null) {pms = new ArrayList<>();}
-		if( ! pms.contains(pm)) {
+		if (pms == null) {
+			pms = new ArrayList<>();
+		}
+		if (!pms.contains(pm)) {
 			pms.add(pm);
 			pm.addTask(this);
 		}
 	}
 
 	public void removePm(HvacPm pm) {
-		if(pms!= null && pms.contains(pm)) {
+		if (pms != null && pms.contains(pm)) {
 			pms.remove(pm);
 			pm.removeTask(this);
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

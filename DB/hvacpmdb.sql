@@ -16,28 +16,18 @@ CREATE SCHEMA IF NOT EXISTS `hvacpmdb` DEFAULT CHARACTER SET utf8 ;
 USE `hvacpmdb` ;
 
 -- -----------------------------------------------------
--- Table `address`
+-- Table `contact_info`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `address` ;
+DROP TABLE IF EXISTS `contact_info` ;
 
-CREATE TABLE IF NOT EXISTS `address` (
+CREATE TABLE IF NOT EXISTS `contact_info` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `street` VARCHAR(300) NOT NULL,
-  `city` VARCHAR(300) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `phone_number` VARCHAR(45) NOT NULL,
+  `street` VARCHAR(300) NULL,
+  `city` VARCHAR(45) NULL,
   `state` VARCHAR(300) NULL,
   `zipcode` VARCHAR(300) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `phone_number`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `phone_number` ;
-
-CREATE TABLE IF NOT EXISTS `phone_number` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `digits` VARCHAR(100) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -49,21 +39,13 @@ DROP TABLE IF EXISTS `customer` ;
 
 CREATE TABLE IF NOT EXISTS `customer` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(100) NOT NULL,
   `company` VARCHAR(300) NOT NULL,
-  `address_id` INT NOT NULL,
-  `phone_number_id` INT NOT NULL,
+  `contact_info_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_customer_address_idx` (`address_id` ASC),
-  INDEX `fk_customer_phone_number1_idx` (`phone_number_id` ASC),
-  CONSTRAINT `fk_customer_address`
-    FOREIGN KEY (`address_id`)
-    REFERENCES `address` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_customer_phone_number1`
-    FOREIGN KEY (`phone_number_id`)
-    REFERENCES `phone_number` (`id`)
+  INDEX `fk_customer_contact_info1_idx` (`contact_info_id` ASC),
+  CONSTRAINT `fk_customer_contact_info1`
+    FOREIGN KEY (`contact_info_id`)
+    REFERENCES `contact_info` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -77,19 +59,20 @@ DROP TABLE IF EXISTS `hvac_pm` ;
 CREATE TABLE IF NOT EXISTS `hvac_pm` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `quarter` INT NOT NULL,
-  `address_id` INT NOT NULL,
+  `completed` TINYINT NULL,
   `customer_id` INT NOT NULL,
+  `contact_info_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_hvac_pm_address1_idx` (`address_id` ASC),
   INDEX `fk_hvac_pm_customer1_idx` (`customer_id` ASC),
-  CONSTRAINT `fk_hvac_pm_address1`
-    FOREIGN KEY (`address_id`)
-    REFERENCES `address` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+  INDEX `fk_hvac_pm_contact_info1_idx` (`contact_info_id` ASC),
   CONSTRAINT `fk_hvac_pm_customer1`
     FOREIGN KEY (`customer_id`)
     REFERENCES `customer` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hvac_pm_contact_info1`
+    FOREIGN KEY (`contact_info_id`)
+    REFERENCES `contact_info` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -102,20 +85,12 @@ DROP TABLE IF EXISTS `technician` ;
 
 CREATE TABLE IF NOT EXISTS `technician` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(100) NULL,
-  `address_id` INT NOT NULL,
-  `phone_number_id` INT NOT NULL,
+  `contact_info_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_technician_address1_idx` (`address_id` ASC),
-  INDEX `fk_technician_phone_number1_idx` (`phone_number_id` ASC),
-  CONSTRAINT `fk_technician_address1`
-    FOREIGN KEY (`address_id`)
-    REFERENCES `address` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_technician_phone_number1`
-    FOREIGN KEY (`phone_number_id`)
-    REFERENCES `phone_number` (`id`)
+  INDEX `fk_technician_contact_info1_idx` (`contact_info_id` ASC),
+  CONSTRAINT `fk_technician_contact_info1`
+    FOREIGN KEY (`contact_info_id`)
+    REFERENCES `contact_info` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -146,49 +121,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `contact`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `contact` ;
-
-CREATE TABLE IF NOT EXISTS `contact` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(70) NOT NULL,
-  `phone_number_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_contact_phone_number1_idx` (`phone_number_id` ASC),
-  CONSTRAINT `fk_contact_phone_number1`
-    FOREIGN KEY (`phone_number_id`)
-    REFERENCES `phone_number` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `hvac_pm_contact`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `hvac_pm_contact` ;
-
-CREATE TABLE IF NOT EXISTS `hvac_pm_contact` (
-  `hvac_pm_id` INT NOT NULL,
-  `contact_id` INT NOT NULL,
-  PRIMARY KEY (`hvac_pm_id`, `contact_id`),
-  INDEX `fk_hvac_pm_has_contacts_contacts1_idx` (`contact_id` ASC),
-  INDEX `fk_hvac_pm_has_contacts_hvac_pm1_idx` (`hvac_pm_id` ASC),
-  CONSTRAINT `fk_hvac_pm_has_contacts_hvac_pm1`
-    FOREIGN KEY (`hvac_pm_id`)
-    REFERENCES `hvac_pm` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_hvac_pm_has_contacts_contacts1`
-    FOREIGN KEY (`contact_id`)
-    REFERENCES `contact` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `task`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `task` ;
@@ -210,12 +142,29 @@ CREATE TABLE IF NOT EXISTS `equipment` (
   `make` VARCHAR(45) NULL,
   `model` VARCHAR(400) NULL,
   `serial` VARCHAR(400) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `hvac_pm_task`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `hvac_pm_task` ;
+
+CREATE TABLE IF NOT EXISTS `hvac_pm_task` (
   `hvac_pm_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_equipment_hvac_pm1_idx` (`hvac_pm_id` ASC),
-  CONSTRAINT `fk_equipment_hvac_pm1`
+  `task_id` INT NOT NULL,
+  PRIMARY KEY (`hvac_pm_id`, `task_id`),
+  INDEX `fk_hvac_pm_has_task_task2_idx` (`task_id` ASC),
+  INDEX `fk_hvac_pm_has_task_hvac_pm2_idx` (`hvac_pm_id` ASC),
+  CONSTRAINT `fk_hvac_pm_has_task_hvac_pm2`
     FOREIGN KEY (`hvac_pm_id`)
     REFERENCES `hvac_pm` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hvac_pm_has_task_task2`
+    FOREIGN KEY (`task_id`)
+    REFERENCES `task` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -230,16 +179,64 @@ CREATE TABLE IF NOT EXISTS `hvac_pm_task` (
   `hvac_pm_id` INT NOT NULL,
   `task_id` INT NOT NULL,
   PRIMARY KEY (`hvac_pm_id`, `task_id`),
-  INDEX `fk_hvac_pm_has_task_task1_idx` (`task_id` ASC),
-  INDEX `fk_hvac_pm_has_task_hvac_pm1_idx` (`hvac_pm_id` ASC),
-  CONSTRAINT `fk_hvac_pm_has_task_hvac_pm1`
+  INDEX `fk_hvac_pm_has_task_task2_idx` (`task_id` ASC),
+  INDEX `fk_hvac_pm_has_task_hvac_pm2_idx` (`hvac_pm_id` ASC),
+  CONSTRAINT `fk_hvac_pm_has_task_hvac_pm2`
     FOREIGN KEY (`hvac_pm_id`)
     REFERENCES `hvac_pm` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_hvac_pm_has_task_task1`
+  CONSTRAINT `fk_hvac_pm_has_task_task2`
     FOREIGN KEY (`task_id`)
     REFERENCES `task` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `hvac_pm_has_equipment`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `hvac_pm_has_equipment` ;
+
+CREATE TABLE IF NOT EXISTS `hvac_pm_has_equipment` (
+  `hvac_pm_id` INT NOT NULL,
+  `equipment_id` INT NOT NULL,
+  PRIMARY KEY (`hvac_pm_id`, `equipment_id`),
+  INDEX `fk_hvac_pm_has_equipment_equipment1_idx` (`equipment_id` ASC),
+  INDEX `fk_hvac_pm_has_equipment_hvac_pm1_idx` (`hvac_pm_id` ASC),
+  CONSTRAINT `fk_hvac_pm_has_equipment_hvac_pm1`
+    FOREIGN KEY (`hvac_pm_id`)
+    REFERENCES `hvac_pm` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hvac_pm_has_equipment_equipment1`
+    FOREIGN KEY (`equipment_id`)
+    REFERENCES `equipment` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `hvac_pm_contact_info`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `hvac_pm_contact_info` ;
+
+CREATE TABLE IF NOT EXISTS `hvac_pm_contact_info` (
+  `hvac_pm_id` INT NOT NULL,
+  `contact_info_id` INT NOT NULL,
+  PRIMARY KEY (`hvac_pm_id`, `contact_info_id`),
+  INDEX `fk_hvac_pm_has_contact_info_contact_info1_idx` (`contact_info_id` ASC),
+  INDEX `fk_hvac_pm_has_contact_info_hvac_pm1_idx` (`hvac_pm_id` ASC),
+  CONSTRAINT `fk_hvac_pm_has_contact_info_hvac_pm1`
+    FOREIGN KEY (`hvac_pm_id`)
+    REFERENCES `hvac_pm` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hvac_pm_has_contact_info_contact_info1`
+    FOREIGN KEY (`contact_info_id`)
+    REFERENCES `contact_info` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -256,24 +253,13 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table `address`
+-- Data for table `contact_info`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hvacpmdb`;
-INSERT INTO `address` (`id`, `street`, `city`, `state`, `zipcode`) VALUES (1, '123 Fake st', 'Glen Burnie', 'MD', '01234');
-INSERT INTO `address` (`id`, `street`, `city`, `state`, `zipcode`) VALUES (2, '1 Corperate blvd', 'washington', 'DC', '43210');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `phone_number`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `hvacpmdb`;
-INSERT INTO `phone_number` (`id`, `digits`) VALUES (1, '281-330-8004');
-INSERT INTO `phone_number` (`id`, `digits`) VALUES (2, '555-867-5309');
-INSERT INTO `phone_number` (`id`, `digits`) VALUES (3, '123-456-7890');
+INSERT INTO `contact_info` (`id`, `name`, `phone_number`, `street`, `city`, `state`, `zipcode`) VALUES (1, 'Frank M', '3334445555', '123 Fake st', 'Glen Burnie', 'MD', '01234');
+INSERT INTO `contact_info` (`id`, `name`, `phone_number`, `street`, `city`, `state`, `zipcode`) VALUES (2, 'Bill Lectric', '3337778888', '1 Corperate blvd', 'washington', 'DC', '43210');
+INSERT INTO `contact_info` (`id`, `name`, `phone_number`, `street`, `city`, `state`, `zipcode`) VALUES (3, 'Lectric Electric', '1230503149', '5 Warehouse ct', 'Cityville', 'ST', '39393');
 
 COMMIT;
 
@@ -283,7 +269,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hvacpmdb`;
-INSERT INTO `customer` (`id`, `name`, `company`, `address_id`, `phone_number_id`) VALUES (1, 'Bill Lectric', 'Bills Electronics', 2, 2);
+INSERT INTO `customer` (`id`, `company`, `contact_info_id`) VALUES (1, 'Bills Electronics', 2);
 
 COMMIT;
 
@@ -293,10 +279,10 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hvacpmdb`;
-INSERT INTO `hvac_pm` (`id`, `quarter`, `address_id`, `customer_id`) VALUES (1, 1, 2, 1);
-INSERT INTO `hvac_pm` (`id`, `quarter`, `address_id`, `customer_id`) VALUES (2, 2, 2, 1);
-INSERT INTO `hvac_pm` (`id`, `quarter`, `address_id`, `customer_id`) VALUES (3, 3, 2, 1);
-INSERT INTO `hvac_pm` (`id`, `quarter`, `address_id`, `customer_id`) VALUES (4, 4, 2, 1);
+INSERT INTO `hvac_pm` (`id`, `quarter`, `completed`, `customer_id`, `contact_info_id`) VALUES (1, 1, 1, 1, 3);
+INSERT INTO `hvac_pm` (`id`, `quarter`, `completed`, `customer_id`, `contact_info_id`) VALUES (2, 2, 1, 1, 3);
+INSERT INTO `hvac_pm` (`id`, `quarter`, `completed`, `customer_id`, `contact_info_id`) VALUES (3, 3, 1, 1, 3);
+INSERT INTO `hvac_pm` (`id`, `quarter`, `completed`, `customer_id`, `contact_info_id`) VALUES (4, 4, 1, 1, 3);
 
 COMMIT;
 
@@ -306,27 +292,17 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hvacpmdb`;
-INSERT INTO `technician` (`id`, `name`, `address_id`, `phone_number_id`) VALUES (1, 'Frank Mathias', 1, 1);
+INSERT INTO `technician` (`id`, `contact_info_id`) VALUES (1, 1);
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `contact`
+-- Data for table `hvac_pm_technician`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hvacpmdb`;
-INSERT INTO `contact` (`id`, `name`, `phone_number_id`) VALUES (1, 'Joe Shmoe', 3);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `hvac_pm_contact`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `hvacpmdb`;
-INSERT INTO `hvac_pm_contact` (`hvac_pm_id`, `contact_id`) VALUES (1, 1);
+INSERT INTO `hvac_pm_technician` (`technician_id`, `hvac_pm_id`) VALUES (1, 1);
 
 COMMIT;
 
@@ -348,7 +324,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hvacpmdb`;
-INSERT INTO `equipment` (`id`, `make`, `model`, `serial`, `hvac_pm_id`) VALUES (1, 'York', 'Ych', '171029384', 1);
+INSERT INTO `equipment` (`id`, `make`, `model`, `serial`) VALUES (1, 'York', 'Ych', '171029384');
 
 COMMIT;
 
@@ -359,6 +335,19 @@ COMMIT;
 START TRANSACTION;
 USE `hvacpmdb`;
 INSERT INTO `hvac_pm_task` (`hvac_pm_id`, `task_id`) VALUES (1, 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `hvac_pm_contact_info`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `hvacpmdb`;
+INSERT INTO `hvac_pm_contact_info` (`hvac_pm_id`, `contact_info_id`) VALUES (1, 3);
+INSERT INTO `hvac_pm_contact_info` (`hvac_pm_id`, `contact_info_id`) VALUES (2, 3);
+INSERT INTO `hvac_pm_contact_info` (`hvac_pm_id`, `contact_info_id`) VALUES (3, 3);
+INSERT INTO `hvac_pm_contact_info` (`hvac_pm_id`, `contact_info_id`) VALUES (4, 3);
 
 COMMIT;
 

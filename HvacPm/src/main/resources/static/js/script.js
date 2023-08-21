@@ -19,7 +19,6 @@ function loadHvacPmList() {
 				console.log(pms);
 				displayPmList(pms)
 
-				//TODO
 			}
 			else {
 				// Display error on page?
